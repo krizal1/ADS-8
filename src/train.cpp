@@ -20,52 +20,86 @@ Train::~Train() {
 }
 
 void Train::addCage(bool l) {
-	if (!first) {
-		first = new Cage;
-		first->light = l;
-		first->prev = first;
-		first->next = first;
-	} else {
-		Cage* c = first;
-		while (c->next != first)
-			c = c->next;
-		Cage* newCage = new Cage;
-		newCage->light = l;
-		newCage->prev = newCage->next = nullptr;
-		newCage->prev = c;
-		c->next = newCage;
-		newCage->next = first;
-		first->prev = newCage;
-	}
+    if (!first) {
+        first = new Cage;
+        first->light = l;
+        first->prev = first;
+        first->next = first;
+    } else {
+	Cage* c = first;
+        while (c->next != first)
+	    c = c->next;
+        Cage* newCage = new Cage;
+        newCage->light = l;
+        newCage->prev = newCage->next = nullptr;
+        newCage->prev = c;
+        c->next = newCage;
+        newCage->next = first;
+        first->prev = newCage;
+    }
 }
 
 int Train::getLength() {
-    if (!first) {
+    int count_steps = 0;
+    int total_ops = 0;
+    Cage* current = first;
+
+    if (!current) {
         return 0;
     }
-    int count_steps = 0;
-    Cage* current = first;
+
     if (!current->light) {
         current->light = true;
         count_steps++;
         current = current->next;
+
+        
         while (!current->light) {
-            current->light = true;
             count_steps++;
             current = current->next;
+        }
+
+        count_steps_2 = 0;
+        Cage* reverse = current->prev;
+        count_steps_2++;
+
+        
+        while (!reverse->light) {
+            count_steps_2++;
+            reverse = reverse->prev;
+        }
+
+        if (count_steps_2 == count_steps) {
+            total_ops = count_steps * 2;
+            countOp = total_ops;
+            return count_steps;
         }
     } else {
-        current->light = false;
-        count_steps++;
-        current = current->next;
-        while (current->light) {
-            current->light = false;
-            count_steps++;
+        int count = 0;
+        total_ops = 0;
+
+        while (true) {
             current = current->next;
+            count++;
+            total_ops++;
+
+            if (current->light) {
+                current->light = false;
+                for (int i = 0; i < count; i++) {
+                    current = current->prev;
+                    total_ops++;
+                }
+
+                if (!current->light) {
+                    countOp = total_ops;
+                    return count;
+                } else {
+                    count = 0;
+                }
+            }
         }
     }
-    countOp = count_steps * 2;
-    return count_steps;
+    return 0;
 }
 
 int Train::getOpCount() {
