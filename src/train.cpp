@@ -19,9 +19,9 @@ Train::~Train() {
 }
 
 void Train::addCage(bool light) {
-    countOp = 0;
     Cage *newCage = new Cage();
     newCage->light = light;
+
     if (!first) {
         first = newCage;
         newCage->next = newCage;
@@ -30,13 +30,14 @@ void Train::addCage(bool light) {
         Cage *last = first->prev;
         last->next = newCage;
         newCage->prev = last;
-        first->prev = newCage;
         newCage->next = first;
+        first->prev = newCage;
     }
 }
 
 int Train::getLength() {
     if (!first) return 0;
+    countOp = 0;
     Cage *current = first;
     int length = 0;
     do {
