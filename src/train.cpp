@@ -43,7 +43,7 @@ int Train::getLength() {
     int count_steps = 0;
     int count_steps_2 = 0;
     int total_ops = 0;
-    Cage* current = first; 
+    Cage* current = first;
 
     if (!current) {
         return 0;
